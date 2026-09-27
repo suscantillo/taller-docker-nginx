@@ -1,0 +1,26 @@
+services:
+  api:
+    build: .
+    environment:
+      - PORT=3000
+      - REDIS_HOST=redis 
+      - REDIS_PORT=6379
+    expose:
+      - "3000" 
+    depends_on:
+      - redis
+
+  nginx:
+    image: nginx:1.28-alpine
+    ports:
+      - "8080:8080"
+    volumes:
+      # la z es por selinux de fedora
+      - ./nginx/nginx.conf:/etc/nginx/conf.d/default.conf:ro,z
+    depends_on:
+      - api
+
+  redis:
+    image: redis:7-alpine
+    expose:
+      - "6379"
